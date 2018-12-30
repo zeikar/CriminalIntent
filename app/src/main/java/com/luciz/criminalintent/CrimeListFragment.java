@@ -15,11 +15,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.List;
+import java.util.UUID;
 
 public class CrimeListFragment extends Fragment {
 
+    private static final String ARG_CRIME_ID = "crime_id";
+
     private RecyclerView crimeRecyclerView;
     private CrimeAdapter adapter;
+
+    public static CrimeListFragment newInstance() {
+        Bundle args = new Bundle();
+        CrimeListFragment fragment = new CrimeListFragment();
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     @Nullable
     @Override
@@ -47,7 +57,7 @@ public class CrimeListFragment extends Fragment {
             adapter = new CrimeAdapter(crimes);
             crimeRecyclerView.setAdapter(adapter);
         } else {
-            adapter.notifyDataSetChanged();
+            adapter.notifyItemChanged(getArguments().getInt(ARG_CRIME_ID));
         }
     }
 
@@ -78,6 +88,7 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
+            getArguments().putInt(ARG_CRIME_ID, getLayoutPosition());
             startActivity(CrimeActivity.newIntent(getActivity(), crime.getId()));
         }
     }
