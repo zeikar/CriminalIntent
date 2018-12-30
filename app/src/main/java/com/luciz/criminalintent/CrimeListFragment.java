@@ -1,5 +1,6 @@
 package com.luciz.criminalintent;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,6 +19,7 @@ import java.util.List;
 public class CrimeListFragment extends Fragment {
 
     private RecyclerView crimeRecyclerView;
+    private CrimeAdapter adapter;
 
     @Nullable
     @Override
@@ -31,12 +33,22 @@ public class CrimeListFragment extends Fragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUI();
+    }
+
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.getInstance(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
 
-        CrimeAdapter adapter = new CrimeAdapter(crimes);
-        crimeRecyclerView.setAdapter(adapter);
+        if (adapter == null) {
+            adapter = new CrimeAdapter(crimes);
+            crimeRecyclerView.setAdapter(adapter);
+        } else {
+            adapter.notifyDataSetChanged();
+        }
     }
 
     private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -66,7 +78,7 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Toast.makeText(getActivity(), crime.getTitle(), Toast.LENGTH_SHORT).show();
+            startActivity(CrimeActivity.newIntent(getActivity(), crime.getId()));
         }
     }
 
